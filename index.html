@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400&amp;family=EB+Garamond:ital,wght@0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<style>
+  * { cursor: var(--cur, url(assets/cursor.png) 7 6), auto !important; }
+  html, body { margin: 0; padding: 0; background: #f4f4f2; }
+  a { color: #14140f; text-decoration: none; }
+  a:hover { color: #a8802e; }
+  @keyframes avLoadMark { 0% { opacity: 0; transform: scale(0.965); } 34% { opacity: 1; transform: scale(1); } 100% { opacity: 1; transform: scale(1); } }
+  @keyframes avLoadBar { 0% { transform: scaleX(0); } 100% { transform: scaleX(1); } }
+  @keyframes avLoadContentOut { 0%, 72% { opacity: 1; } 92%, 100% { opacity: 0; visibility: hidden; } }
+  @keyframes avPlayerIn { 0%, 76% { opacity: 0; transform: scale(0.965); } 100% { opacity: 1; transform: scale(1); } }
+  @keyframes avHintIn { 0%, 78% { opacity: 0; } 100% { opacity: 1; } }
+  @keyframes avBgIn { 0%, 78% { opacity: 0; } 100% { opacity: 0.4; } }
+  @keyframes avSpin { to { transform: rotate(360deg); } }
+  @keyframes avCdOut { 0% { transform: translateY(0) scale(0.4); opacity: 0; } 30% { opacity: 1; } 100% { transform: translateY(calc(min(370px, 37vh) * -0.98)) scale(1); opacity: 1; } }
+  @keyframes avOrbit { to { transform: rotate(360deg); } }
+  @keyframes avBar { 0% { transform: scaleY(0.35); } 50% { transform: scaleY(1.25); } 100% { transform: scaleY(0.35); } }
+</style>
+</helmet>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#14140f"></rect><circle cx="50" cy="50" r="26" fill="none" stroke="#e5c25c" stroke-width="3"></circle><circle cx="50" cy="50" r="6" fill="#e5c25c"></circle></svg></template>
+<dc-import name="Hero" hint-size="100%,100vh"></dc-import>
+<div style="position: fixed; inset: 0; z-index: 190; pointer-events: none; display: flex; flex-direction: column;">
+  <div style="flex: 1 1 0; background: #ffffff; transform: translateX({{ curtainXL }}); transition: transform 1.05s cubic-bezier(0.76,0,0.24,1) 0.00s;"></div>
+  <div style="flex: 1 1 0; background: #ffffff; transform: translateX({{ curtainXR }}); transition: transform 1.05s cubic-bezier(0.76,0,0.24,1) 0.09s;"></div>
+  <div style="flex: 1 1 0; background: #ffffff; transform: translateX({{ curtainXL }}); transition: transform 1.05s cubic-bezier(0.76,0,0.24,1) 0.18s;"></div>
+  <div style="flex: 1 1 0; background: #ffffff; transform: translateX({{ curtainXR }}); transition: transform 1.05s cubic-bezier(0.76,0,0.24,1) 0.27s;"></div>
+  <div style="flex: 1 1 0; background: #ffffff; transform: translateX({{ curtainXL }}); transition: transform 1.05s cubic-bezier(0.76,0,0.24,1) 0.36s;"></div>
+  <div style="flex: 1 1 0; background: #ffffff; transform: translateX({{ curtainXR }}); transition: transform 1.05s cubic-bezier(0.76,0,0.24,1) 0.45s;"></div>
+</div>
+<div data-screen-label="Loading" style="opacity: {{ setupOpacity }}; pointer-events: {{ setupPE }}; transition: opacity 0.7s ease; position: fixed; inset: 0; z-index: 200; background: transparent; display: flex; align-items: center; justify-content: center; padding: 0 5vw; box-sizing: border-box; user-select: none; touch-action: none;">
+  <div style="position: absolute; z-index: 2; right: 6vw; top: 50%; width: min(38vw, 520px); transform: translateY(-50%); pointer-events: none; display: flex; flex-direction: column; gap: 18px; font-family: 'EB Garamond', Georgia, serif; color: #14140f;">
+    <div style="overflow: hidden;">
+      <div style="font-size: clamp(24px, 2.6vw, 40px); line-height: 1.22; letter-spacing: -0.01em; text-wrap: pretty; opacity: {{ revealOp }}; transform: translateY({{ revealY1 }}); transition: opacity 1.1s ease 1.95s, transform 1.2s cubic-bezier(0.22,1,0.36,1) 1.95s;">This portfolio belongs to Rohit,<br />Founder &amp; CEO of Avenor Studio.</div>
+    </div>
+    <div style="overflow: hidden;">
+      <div style="font-size: clamp(15px, 1.35vw, 21px); font-style: italic; line-height: 1.5; color: rgba(20,20,15,0.62); opacity: {{ revealOp }}; transform: translateY({{ revealY2 }}); transition: opacity 1.1s ease 2.35s, transform 1.2s cubic-bezier(0.22,1,0.36,1) 2.35s;">Volume up, and see what's in the deck.</div>
+    </div>
+  </div>
+
+  <div ref="{{ bgRef }}" style="position: absolute; inset: 0; z-index: 0; pointer-events: none; background-image: url(assets/loading-bg.png); background-repeat: no-repeat; background-position: 20% 50%; background-size: min(86%, 1320px) auto; opacity: 0; animation: avBgIn 3.4s cubic-bezier(0.22,1,0.36,1) forwards;"></div>
+  <div style="position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; gap: 4vw; width: 100%; transform: translateX({{ playShift }}) scale(0.6); transform-origin: center center; transition: transform 1.8s cubic-bezier(0.22,1,0.36,1);">
+  <div style="position: relative; display: flex; align-items: flex-start; animation: avPlayerIn 3.4s cubic-bezier(0.22,1,0.36,1) forwards;">
+    <div ref="{{ ringRef }}" style="position: absolute; inset: 0; z-index: 0; animation: avOrbit 26s linear infinite;">
+      <sc-for list="{{ discs }}" as="d" hint-placeholder-count="6">
+        <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; transform: rotate({{ d.spoke }}deg); transition: transform 0.42s cubic-bezier(0.22,1,0.36,1); pointer-events: none;">
+          <div onPointerDown="{{ d.onDown }}" style="position: relative; width: calc(min(370px, 37vh) * 0.5); aspect-ratio: 1; border-radius: 50%; background: repeating-radial-gradient(circle at 50% 50%, #232323 0 2px, #101010 2px 4px); box-shadow: 0 10px 26px rgba(0,0,0,0.3); cursor: grab; pointer-events: auto; opacity: {{ d.op }}; transform: {{ d.tf }}; animation: {{ d.anim }};">
+            <div style="position: absolute; inset: 27.5%; border-radius: 50%; overflow: hidden; background: radial-gradient(circle at 38% 32%, #f6f6f6 0%, #cfcfcf 42%, #8f8f8f 100%);">
+              <div style="position: absolute; inset: 0; background-image: {{ d.artBg }}; background-size: cover; background-position: center;"></div>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    <div ref="{{ cardRef }}" style="position: relative; z-index: 1; width: min(370px, 84vw, 37vh); padding: 9%; border-radius: 12%; background: linear-gradient(160deg,#fbfbfa 0%,#ececeb 100%); box-shadow: 22px 26px 60px rgba(20,20,15,0.13), -14px -16px 44px rgba(255,255,255,0.9), inset 0 1px 0 rgba(255,255,255,0.85); display: flex; flex-direction: column; gap: calc(min(370px, 84vw, 37vh) * 0.05);">
+      <div style="position: relative; flex: 0 0 auto; aspect-ratio: 1.12 / 1; border-radius: 8%; background: linear-gradient(155deg,#242424 0%,#141414 60%,#1c1c1c 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 10px 24px rgba(20,20,15,0.22); overflow: hidden;">
+        <div style="position: absolute; top: 5%; left: 5%; width: 4%; aspect-ratio: 1; border-radius: 50%; background: #0d0d0d; box-shadow: inset 0 0 0 1px #3a3a3a;"></div>
+        <div ref="{{ platterRef }}" style="position: absolute; top: 50%; left: 33%; transform: translate(-50%,-50%); width: 56%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 38% 32%, #2b2b2b 0%, #1a1a1a 58%, #0d0d0d 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,0.16), inset 0 0 0 1px rgba(255,255,255,0.07), 0 10px 20px rgba(0,0,0,0.65), 0 2px 4px rgba(0,0,0,0.5), 0 0 0 3px rgba(255,255,255,0.04);">
+          <div style="position: absolute; top: 47.5%; left: 47.5%; width: 5%; aspect-ratio: 1; border-radius: 50%; background: #6d6d6d;"></div>
+          <sc-if value="{{ placed }}" hint-placeholder-val="{{ true }}">
+            <div onPointerDown="{{ onDiscLift }}" style="position: absolute; inset: 0; border-radius: 50%; cursor: grab; background: repeating-radial-gradient(circle at 50% 50%, #1a1a1a 0 2px, #0b0b0b 2px 4px); box-shadow: 0 6px 18px rgba(0,0,0,0.5); animation: {{ spinCss }};">
+              <div style="position: absolute; inset: 27.5%; border-radius: 50%; overflow: hidden; background: radial-gradient(circle at 38% 32%, #f6f6f6 0%, #cfcfcf 42%, #8f8f8f 100%);">
+                <div style="position: absolute; inset: 0; background-image: {{ placedArtBg }}; background-size: cover; background-position: center;"></div>
+              </div>
+              <div style="position: absolute; top: 46%; left: 48%; width: 7%; aspect-ratio: 1; border-radius: 50%; background: #f0f0ee;"></div>
+            </div>
+          </sc-if>
+        </div>
+        <div ref="{{ hingeRef }}" style="position: absolute; top: 12%; right: 9%; width: 22%; aspect-ratio: 1; border-radius: 50%; background: #171717; box-shadow: inset 0 0 0 1px #3d3d3d;"></div>
+        <div onPointerDown="{{ onArmDown }}" style="position: absolute; top: 30%; right: 19%; width: 14px; margin-right: -6px; height: 58%; cursor: grab; transform: rotate({{ armDeg }}deg); transform-origin: top center; transition: transform 0.6s linear; display: flex; justify-content: center;">
+          <div style="position: absolute; top: -13%; width: 9px; height: 16%; border-radius: 3px; background: linear-gradient(90deg,#8f8f8f 0%,#efefef 42%,#9a9a9a 100%); box-shadow: 0 1px 3px rgba(0,0,0,0.5);"></div>
+          <div style="position: absolute; top: 6%; width: 5px; height: 8%; border-radius: 2px; background: linear-gradient(90deg,#6f6f6f,#cfcfcf 50%,#6f6f6f);"></div>
+          <div style="width: 3px; height: 100%; background: linear-gradient(90deg,#7c7c7c 0%,#f2f2f2 45%,#8a8a8a 100%); box-shadow: 0 1px 3px rgba(0,0,0,0.45);"></div>
+          <div style="position: absolute; bottom: -9%; width: 11px; height: 13%; border-radius: 2px 2px 3px 3px; background: linear-gradient(160deg,#2b2b2b,#111); box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), 0 2px 5px rgba(0,0,0,0.5);"></div>
+          <div style="position: absolute; bottom: -13%; width: 2px; height: 5%; background: #cfcfcf;"></div>
+        </div>
+        <div style="position: absolute; right: 12%; bottom: 12%; width: 3%; height: 34%; border-radius: 3px; background: repeating-linear-gradient(180deg,#2e2e2e 0 2px,#151515 2px 5px);"></div>
+      </div>
+      <div style="flex: 0 0 auto; border-radius: 7%/22%; padding: 5% 6%; background: linear-gradient(160deg,#ffffff 0%,#f1f1ef 100%); box-shadow: inset 2px 3px 8px rgba(20,20,15,0.06), inset -2px -3px 8px rgba(255,255,255,0.9); display: flex; align-items: baseline; justify-content: space-between; gap: 8%;">
+        <div style="font-family: Archivo, Helvetica, Arial, sans-serif; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(20,20,15,0.4);">Now</div>
+        <div style="flex: 1; min-width: 0; text-align: right; display: flex; flex-direction: column; gap: 2px;">
+          <div style="font-family: Archivo, Helvetica, Arial, sans-serif; font-weight: 600; font-size: max(11px, calc(min(370px, 84vw, 37vh) * 0.042)); color: #14140f; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ nowPlaying }}</div>
+          <div style="font-family: Archivo, Helvetica, Arial, sans-serif; font-size: max(9px, calc(min(370px, 84vw, 37vh) * 0.032)); color: rgba(20,20,15,0.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ nowArtist }}</div>
+        </div>
+      </div>
+      <div style="flex: 0 0 auto; display: flex; gap: 5%;">
+        <div style="flex: 1; min-width: 0; border-radius: 7%; padding: 6%; background: linear-gradient(160deg,#f7f7f6 0%,#e9e9e7 100%); box-shadow: inset 2px 3px 8px rgba(20,20,15,0.07), inset -2px -3px 8px rgba(255,255,255,0.9); display: flex; flex-direction: column; gap: 10%; justify-content: space-between;">
+          <div ref="{{ barsRef }}" style="position: relative; display: flex; align-items: center; justify-content: space-between; gap: 1px; height: min(74px, 9vh);">
+            <div style="flex: 1 1 0; min-width: 1.5px; max-width: 3px; height: 18%; background: rgba(20,20,15,0.16); transform-origin: center; animation: avBar 1.1s ease-in-out 0.00s infinite; animation-play-state: {{ barPlay }};"></div>
+            <div style="flex: 1 1 0; min-width: 1.5px; max-width: 3px; height: 40%; background: rgba(20,20,15,0.20); transform-origin: center; animation: avBar 1.1s ease-in-out 0.06s infinite; animation-play-state: {{ barPlay }};"></div>
+            <div style="flex: 1 1 0; min-width: 1.5px; max-width: 3px; height: 64%; background: rgba(20,20,15,0.25); transform-origin: center; animation: avBar 1.1s ease-in-out 0.12s infinite; animation-play-state: {{ barPlay }};"></div>
+            <div style="flex: 1 1 0; min-width: 1.5px; max-width: 3px; height: 88%; background: rgba(20,20,15,0.30); transform-origin: center; animation: avBar 1.1s ease-in-out 0.18s infinite; animation-play-state: {{ barPlay }};"></div>
+            <div style="flex: 1 1 0; min-width: 1.5px; max-width: 3px; height: 54%; background: rgba(20,20,15,0.23); transform-origin: center; animation: avBar 1.1s ease-in-out 0.24s infinite; animation-play-state: {{ barPlay }};"></div>
+            <div style="flex: 1 1 0; min-width: 1.5px; max-width: 3px; height: 76%; background: rgba(20,20,15,0.27); transform-origin: center; animation: avBar 1.1s ease-in-out 0.30s infinite; animation-play-state: {{ barPlay }};"></div>
+            <div style="flex: 1 1 0; min-width: 1.5px; max-width: 3px; height: 34%; background: rgba(20,20,15,0.19); transform-origin: center; animation: avBar 1.1s ease-in-out 0.36s infinite; animation-play-state: {{ barPlay }};"></div>
+            <div style="flex: 1 1 0; min-width: 1.5px; max-width: 3px; height: 60%; background: rgba(20,20,15,0.24); transform-origin: center; animation: avBar 1.1s ease-in-out 0.42s infinite; animation-play-state: {{ barPlay }};"></div>
+            <div style="flex: 1 1 0; min-width: 1.5px; max-width: 3px; height: 84%; background: rgba(20,20,15,0.29); transform-origin: center; animation: avBar 1.1s ease-in-out 0.48s infinite; animation-play-state: {{ barPlay }};"></div>
+            <div style="flex: 1 1 0; min-width: 1.5px; max-width: 3px; height: 44%; background: rgba(20,20,15,0.21); transform-origin: center; animation: avBar 1.1s ease-in-out 0.54s infinite; animation-play-state: {{ barPlay }};"></div>
+            <div style="flex: 1 1 0; min-width: 1.5px; max-width: 3px; height: 70%; background: rgba(20,20,15,0.26); transform-origin: center; animation: avBar 1.1s ease-in-out 0.60s infinite; animation-play-state: {{ barPlay }};"></div>
+            <div style="flex: 1 1 0; min-width: 1.5px; max-width: 3px; height: 26%; background: rgba(20,20,15,0.17); transform-origin: center; animation: avBar 1.1s ease-in-out 0.66s infinite; animation-play-state: {{ barPlay }};"></div>
+            <div style="flex: 1 1 0; min-width: 1.5px; max-width: 3px; height: 50%; background: rgba(20,20,15,0.22); transform-origin: center; animation: avBar 1.1s ease-in-out 0.72s infinite; animation-play-state: {{ barPlay }};"></div>
+            <div style="flex: 1 1 0; min-width: 1.5px; max-width: 3px; height: 80%; background: rgba(20,20,15,0.28); transform-origin: center; animation: avBar 1.1s ease-in-out 0.78s infinite; animation-play-state: {{ barPlay }};"></div>
+            <div style="flex: 1 1 0; min-width: 1.5px; max-width: 3px; height: 46%; background: rgba(20,20,15,0.21); transform-origin: center; animation: avBar 1.1s ease-in-out 0.84s infinite; animation-play-state: {{ barPlay }};"></div>
+            <div style="flex: 1 1 0; min-width: 1.5px; max-width: 3px; height: 72%; background: rgba(20,20,15,0.26); transform-origin: center; animation: avBar 1.1s ease-in-out 0.90s infinite; animation-play-state: {{ barPlay }};"></div>
+            <div style="flex: 1 1 0; min-width: 1.5px; max-width: 3px; height: 30%; background: rgba(20,20,15,0.18); transform-origin: center; animation: avBar 1.1s ease-in-out 0.96s infinite; animation-play-state: {{ barPlay }};"></div>
+            <div style="flex: 1 1 0; min-width: 1.5px; max-width: 3px; height: 56%; background: rgba(20,20,15,0.23); transform-origin: center; animation: avBar 1.1s ease-in-out 1.02s infinite; animation-play-state: {{ barPlay }};"></div>
+            <div style="flex: 1 1 0; min-width: 1.5px; max-width: 3px; height: 90%; background: rgba(20,20,15,0.30); transform-origin: center; animation: avBar 1.1s ease-in-out 1.08s infinite; animation-play-state: {{ barPlay }};"></div>
+            <div style="flex: 1 1 0; min-width: 1.5px; max-width: 3px; height: 48%; background: rgba(20,20,15,0.22); transform-origin: center; animation: avBar 1.1s ease-in-out 1.14s infinite; animation-play-state: {{ barPlay }};"></div>
+            <div style="flex: 1 1 0; min-width: 1.5px; max-width: 3px; height: 66%; background: rgba(20,20,15,0.25); transform-origin: center; animation: avBar 1.1s ease-in-out 1.20s infinite; animation-play-state: {{ barPlay }};"></div>
+            <div style="flex: 1 1 0; min-width: 1.5px; max-width: 3px; height: 22%; background: rgba(20,20,15,0.16); transform-origin: center; animation: avBar 1.1s ease-in-out 1.26s infinite; animation-play-state: {{ barPlay }};"></div>
+            <div style="flex: 1 1 0; min-width: 1.5px; max-width: 3px; height: 58%; background: rgba(20,20,15,0.24); transform-origin: center; animation: avBar 1.1s ease-in-out 1.32s infinite; animation-play-state: {{ barPlay }};"></div>
+            <div style="flex: 1 1 0; min-width: 1.5px; max-width: 3px; height: 86%; background: rgba(20,20,15,0.29); transform-origin: center; animation: avBar 1.1s ease-in-out 1.38s infinite; animation-play-state: {{ barPlay }};"></div>
+            <div style="flex: 1 1 0; min-width: 1.5px; max-width: 3px; height: 38%; background: rgba(20,20,15,0.20); transform-origin: center; animation: avBar 1.1s ease-in-out 1.44s infinite; animation-play-state: {{ barPlay }};"></div>
+            <div style="flex: 1 1 0; min-width: 1.5px; max-width: 3px; height: 62%; background: rgba(20,20,15,0.24); transform-origin: center; animation: avBar 1.1s ease-in-out 1.50s infinite; animation-play-state: {{ barPlay }};"></div>
+            <div style="flex: 1 1 0; min-width: 1.5px; max-width: 3px; height: 28%; background: rgba(20,20,15,0.18); transform-origin: center; animation: avBar 1.1s ease-in-out 1.56s infinite; animation-play-state: {{ barPlay }};"></div>
+            <div style="flex: 1 1 0; min-width: 1.5px; max-width: 3px; height: 74%; background: rgba(20,20,15,0.27); transform-origin: center; animation: avBar 1.1s ease-in-out 1.62s infinite; animation-play-state: {{ barPlay }};"></div>
+            <div style="position: absolute; top: -6px; bottom: -6px; left: 44%; width: 1px; background: #14140f;"></div>
+          </div>
+          <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 10%;">
+            <div style="font-family: Archivo, Helvetica, Arial, sans-serif; font-size: max(13px, calc(min(370px, 84vw, 37vh) * 0.055)); color: #14140f;">{{ trackNo }}</div>
+            <div style="text-align: right; font-family: Archivo, Helvetica, Arial, sans-serif; font-size: max(9px, calc(min(370px, 84vw, 37vh) * 0.032)); line-height: 1.5;">
+              <div style="color: #14140f;">{{ elapsed }}</div>
+              <div style="color: rgba(20,20,15,0.5);">{{ total }}</div>
+            </div>
+          </div>
+        </div>
+        <div style="flex: 0 0 22%; min-width: 0; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: space-between;">
+          <div style="height: 33%; aspect-ratio: 1; border-radius: 50%; background: conic-gradient(from 210deg, #d9d9d7 0deg, #f4f4f2 120deg, #bdbdbb 260deg, #d9d9d7 360deg); box-shadow: 6px 8px 18px rgba(20,20,15,0.16), -4px -5px 14px rgba(255,255,255,0.9);"></div>
+          <div style="font-family: Archivo, Helvetica, Arial, sans-serif; font-size: 9px; color: rgba(20,20,15,0.4);">24.985</div>
+          <div style="height: 33%; aspect-ratio: 1; border-radius: 50%; background: conic-gradient(from 160deg, #4a4a4a 0deg, #1c1c1c 130deg, #6d6d6d 250deg, #4a4a4a 360deg); box-shadow: 6px 8px 18px rgba(20,20,15,0.22), -4px -5px 14px rgba(255,255,255,0.8);"></div>
+          <div onClick="{{ togglePlay }}" style="width: 100%; box-sizing: border-box; flex: 0 0 auto; cursor: pointer; text-align: center; padding: 2px 0; border-radius: 999px; background: {{ pillBg }}; box-shadow: inset 1px 2px 4px rgba(20,20,15,0.12); font-family: Archivo, Helvetica, Arial, sans-serif; font-size: 9px; letter-spacing: 0.12em; color: {{ pillFg }};">{{ pill }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  </div>
+
+  <sc-if value="{{ dragging }}" hint-placeholder-val="{{ false }}">
+    <div style="position: fixed; z-index: 300; left: {{ dragX }}px; top: {{ dragY }}px; width: calc(min(370px, 37vh) * 0.5); aspect-ratio: 1; margin: calc(min(370px, 37vh) * -0.25) 0 0 calc(min(370px, 37vh) * -0.25); border-radius: 50%; background: repeating-radial-gradient(circle at 50% 50%, #232323 0 2px, #101010 2px 4px); box-shadow: 0 22px 44px rgba(0,0,0,0.34); pointer-events: none;">
+      <div style="position: absolute; inset: 27.5%; border-radius: 50%; overflow: hidden; background: radial-gradient(circle at 38% 32%, #f6f6f6 0%, #cfcfcf 42%, #8f8f8f 100%);">
+        <div style="position: absolute; inset: 0; background-image: {{ dragArtBg }}; background-size: cover; background-position: center;"></div>
+      </div>
+    </div>
+  </sc-if>
+
+
+  <div ref="{{ tagRef }}" style="position: fixed; left: 0; top: 0; z-index: 320; pointer-events: none; opacity: {{ tagOpacity }}; transform: translate3d(-999px, -999px, 0); transform-style: preserve-3d;">
+    <div style="padding: 7px 14px; border-radius: 8px; border: 1px solid #c89628; background: #101010; font-family: Archivo, Helvetica, Arial, sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 0.02em; color: #f7e6ae; white-space: nowrap;">{{ name }}</div>
+  </div>
+
+  <div style="position: absolute; left: 0; right: 0; bottom: 6vh; text-align: center; font-family: Archivo, Helvetica, Arial, sans-serif; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(20,20,15,0.42); opacity: 0; animation: avHintIn 3.4s cubic-bezier(0.22,1,0.36,1) forwards;">{{ hint }}</div>
+
+  <div style="position: absolute; left: 0; right: 0; top: 50%; display: flex; flex-direction: column; align-items: center; gap: min(28px, 3.2vh); transform: translateY(-50%) scale(0.78); animation: avLoadContentOut 3.2s cubic-bezier(0.4,0,0.2,1) forwards;">
+    <img src="assets/avenor-logo.png" alt="Avenor" style="width: min(34vw, 380px); height: auto; display: block; animation: avLoadMark 2.6s cubic-bezier(0.22,1,0.36,1) forwards;" />
+    <div style="width: min(64vw, 720px); height: 1px; background: rgba(20,20,15,0.14); overflow: hidden;">
+      <div style="height: 100%; width: 100%; transform-origin: left center; background-image: linear-gradient(90deg,#f7e6ae 0%,#e5c25c 48%,#a8802e 100%); animation: avLoadBar 2.1s cubic-bezier(0.4,0,0.2,1) forwards;"></div>
+    </div>
+  </div>
+</div>
+
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  art = { 0: 'assets/art-blinding.jpg', 1: 'assets/art-starboy.jpg', 2: 'assets/art-afterhours.jpg', 3: 'assets/art-partymonster.jpg', 4: 'assets/art-often.jpg', 5: 'assets/art-moth.jpg' };
+
+  tracks = [
+    'uploads/The Weeknd - Blinding Lights (Official Video).mp3',
+    'uploads/The Weeknd - Starboy ft. Daft Punk (Official Video) ft. Daft Punk.mp3',
+    'uploads/The Weeknd - Heartless (Official Video).mp3',
+    'uploads/The Weeknd - Party Monster (Official Video).mp3',
+    'uploads/The Weeknd - Often (NSFW) (Official Video).mp3',
+    'uploads/Swedish House Mafia and The Weeknd - Moth To A Flame (Official Video).mp3'
+  ];
+
+  audioFor(id) {
+    if (this._aId !== id) {
+      if (this._a) { this._a.pause(); this._a = null; }
+      const a = new Audio(encodeURI(this.tracks[id % this.tracks.length]));
+      this._a = a;
+      this._aId = id;
+      a.addEventListener('timeupdate', () => {
+        if (this._a !== a) return;
+        const dur = a.duration || 0;
+        const prog = dur ? Math.min(1, a.currentTime / dur) : 0;
+        this.setState({ secs: Math.floor(a.currentTime), dur: dur, arm: this.state.playing ? 44 + prog * 14 : this.state.arm });
+      });
+      a.addEventListener('ended', () => {
+        if (this._a !== a) return;
+        if (this.state.screen === 'home') {
+          const next = ((this.state.placedId === null ? 0 : this.state.placedId) + 1) % this.tracks.length;
+          this.setState({ placedId: next, secs: 0, dur: 0 });
+          this.startAudio(next);
+          this.publishBus(next);
+          return;
+        }
+        this.stopMeter();
+        clearTimeout(this._handoffT);
+        this.setState({ playing: false, arm: 16 });
+      });
+    }
+    return this._a;
+  }
+
+  armHandoff() {
+    clearTimeout(this._handoffT);
+    if (this.state.screen === 'home') return;
+    this._handoffT = setTimeout(() => {
+      this.publishBus();
+      this.setState({ fading: true });
+      setTimeout(() => {
+        this.setState({ curtain: true });
+        window.__avHomeReady = true;
+        window.dispatchEvent(new CustomEvent('av-home-ready'));
+        setTimeout(() => this.setState({ screen: 'home' }), 1600);
+      }, 900);
+    }, 9000);
+  }
+
+  publishBus(id) {
+    const pid = id === undefined ? this.state.placedId : id;
+    window.__avAudio = {
+      audio: this._a,
+      analyser: this._analyser || null,
+      title: pid === null ? '' : ['Blinding Lights', 'Starboy', 'Heartless', 'Party Monster', 'Often', 'Moth To A Flame'][pid % 6],
+      artBg: (pid !== null && this.art[pid % 6]) ? this.art[pid % 6] : null
+    };
+    window.dispatchEvent(new CustomEvent('av-audio-bus'));
+  }
+
+  startAudio(id) {
+    const a = this.audioFor(id);
+    this.armHandoff();
+    const p = a.play();
+    if (p && p.catch) p.catch(() => {});
+    this.startMeter(a);
+  }
+
+  bars() {
+    const c = this.barsRef.current;
+    if (!c) return [];
+    return Array.prototype.filter.call(c.children, el => el.style.position !== 'absolute');
+  }
+
+  startMeter(a) {
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      if (!this._ctx) this._ctx = new AC();
+      if (this._ctx.state === 'suspended') this._ctx.resume();
+      if (this._srcFor !== a) {
+        this._srcNode = this._ctx.createMediaElementSource(a);
+        this._analyser = this._ctx.createAnalyser();
+        this._analyser.fftSize = 128;
+        this._analyser.smoothingTimeConstant = 0.75;
+        this._srcNode.connect(this._analyser);
+        this._analyser.connect(this._ctx.destination);
+        this._srcFor = a;
+      }
+    } catch (err) { return; }
+    if (!this._analyser) return;
+    const bars = this.bars();
+    if (!this._idle) this._idle = bars.map(el => el.style.height);
+    const data = new Uint8Array(this._analyser.frequencyBinCount);
+    const loop = () => {
+      this._analyser.getByteFrequencyData(data);
+      const n = bars.length;
+      for (let i = 0; i < n; i++) {
+        const t = i / Math.max(1, n - 1);
+        const idx = Math.min(data.length - 1, Math.floor(Math.pow(t, 1.7) * data.length * 0.8));
+        const v = data[idx] / 255;
+        bars[i].style.animation = 'none';
+        bars[i].style.height = (8 + v * 92).toFixed(1) + '%';
+      }
+      this._raf = requestAnimationFrame(loop);
+    };
+    cancelAnimationFrame(this._raf);
+    this._raf = requestAnimationFrame(loop);
+  }
+
+  stopMeter() {
+    cancelAnimationFrame(this._raf);
+    this._raf = null;
+    const bars = this.bars();
+    if (this._idle) bars.forEach((el, i) => { el.style.height = this._idle[i] || ''; el.style.animation = ''; });
+  }
+
+  stopAudio(reset) {
+    this.stopMeter();
+    if (!this._a) return;
+    this._a.pause();
+    if (reset) { this._a.currentTime = 0; this._a = null; this._aId = null; }
+  }
+
+  state = { slots: [0, 1, 2, 3, 4, 5], gap: null, placedId: null, dragIdx: null, dragX: 0, dragY: 0, arm: 16, playing: false, secs: 0, dur: 0, entered: false, screen: 'setup', fading: false, curtain: false, name: '', shape: 'ink', size: 'm', shade: 'gold' };
+
+  platterRef = React.createRef();
+  bgRef = React.createRef();
+  hingeRef = React.createRef();
+  ringRef = React.createRef();
+  cardRef = React.createRef();
+  tagRef = React.createRef();
+  barsRef = React.createRef();
+
+
+  fmt(n) {
+    const h = String(Math.floor(n / 3600)).padStart(2, '0');
+    const m = String(Math.floor(n / 60) % 60).padStart(2, '0');
+    const s = String(n % 60).padStart(2, '0');
+    return h + ':' + m + ':' + s;
+  }
+
+  ringAngle() {
+    const r = this.ringRef.current;
+    if (!r) return 0;
+    const t = getComputedStyle(r).transform;
+    if (!t || t === 'none') return 0;
+    const m = t.match(/matrix\(([^)]+)\)/);
+    if (!m) return 0;
+    const p = m[1].split(',').map(Number);
+    return Math.atan2(p[1], p[0]) * 180 / Math.PI;
+  }
+
+  gapFor(e) {
+    const c = this.cardRef.current;
+    if (!c) return null;
+    const r = c.getBoundingClientRect();
+    const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    const total = this.state.slots.length + 1;
+    const step = 360 / total;
+    let a = Math.atan2(e.clientX - cx, -(e.clientY - cy)) * 180 / Math.PI - this.ringAngle();
+    a = ((a % 360) + 360) % 360;
+    return Math.round(a / step) % total;
+  }
+
+  applyCursor() {
+    const s = this.state;
+    document.documentElement.style.setProperty('--cur', 'url(assets/cur-' + s.shape + '-' + s.size + '-' + s.shade + '.png) 7 6');
+  }
+
+  componentDidUpdate() { this.applyCursor(); this.lockScroll(); }
+
+  lockScroll() {
+    const lock = this.state.screen === 'setup';
+    document.documentElement.style.overflow = lock ? 'hidden' : '';
+    document.body.style.overflow = lock ? 'hidden' : '';
+  }
+
+  alignBg = () => {
+    return;
+  };
+
+  componentDidMount() {
+    this.alignBg();
+    this.applyCursor();
+    this.lockScroll();
+    this._move = (e) => {
+      const t = this.tagRef.current;
+      if (t) t.style.transform = 'translate3d(' + (e.clientX + 18) + 'px, ' + (e.clientY + 20) + 'px, 0)';
+      if (this.state.dragIdx !== null) {
+        this.setState({ dragX: e.clientX, dragY: e.clientY, gap: this.gapFor(e) });
+      } else if (this._armDrag) {
+        this.setState({ arm: this.angleFrom(e) });
+      }
+    };
+    this._up = (e) => {
+      if (this.state.dragIdx !== null) {
+        const i = this.state.dragIdx;
+        const overPlatter = this._fromPlatter;
+        const box = overPlatter ? this.platterRef.current : this.cardRef.current;
+        const c = box && box.getBoundingClientRect();
+        const m = c ? (overPlatter ? 0 : c.width * 0.55) : 0;
+        const hit = c && e.clientX > c.left - m && e.clientX < c.right + m && e.clientY > c.top - m && e.clientY < c.bottom + m;
+        this._fromPlatter = false;
+        if (hit && this.state.placedId === null) {
+          this.setState({ dragIdx: null, gap: null, placedId: i });
+        } else {
+          const slots = this.state.slots.slice();
+          const g = this.state.gap === null ? slots.length : Math.min(this.state.gap, slots.length);
+          slots.splice(g, 0, i);
+          this.setState({ dragIdx: null, gap: null, slots: slots });
+        }
+      } else if (this._armDrag) {
+        this._armDrag = false;
+        const a = this.angleFrom(e);
+        if (a > 36 && this.state.placedId !== null) {
+          this.setState({ arm: 44, playing: true });
+          this.startAudio(this.state.placedId);
+        } else {
+          clearTimeout(this._handoffT);
+          this.setState({ arm: 16, playing: false });
+          this.stopAudio(false);
+        }
+      }
+    };
+    this._enterT = setTimeout(() => this.setState({ entered: true }), 4900);
+    window.addEventListener('pointermove', this._move);
+    window.addEventListener('pointerup', this._up);
+  }
+
+  componentWillUnmount() {
+    cancelAnimationFrame(this._bgRaf);
+    clearTimeout(this._handoffT);
+    window.removeEventListener('pointermove', this._move);
+    window.removeEventListener('pointerup', this._up);
+    this.stopAudio(true);
+    clearTimeout(this._enterT);
+  }
+
+  angleFrom(e) {
+    const h = this.hingeRef.current;
+    if (!h) return this.state.arm;
+    const r = h.getBoundingClientRect();
+    const px = r.left + r.width / 2, py = r.top + r.height / 2;
+    const dx = e.clientX - px, dy = Math.max(1, e.clientY - py);
+    const a = Math.atan2(-dx, dy) * 180 / Math.PI;
+    return Math.max(16, Math.min(60, a));
+  }
+
+  renderVals() {
+    const s = this.state;
+    const dragging = s.dragIdx !== null;
+    const total = s.slots.length + (dragging ? 1 : 0);
+    const step = 360 / Math.max(total, 1);
+    const gap = dragging ? (s.gap === null ? total - 1 : s.gap) : -1;
+    const discs = [];
+    let n = 0;
+    for (let k = 0; k < total; k++) {
+      if (k === gap) continue;
+      const id = s.slots[n++];
+      discs.push({
+        spoke: (k * step).toFixed(2),
+        artBg: this.art[id % 6] ? "url('" + this.art[id % 6] + "')" : 'none',
+        op: s.entered ? 1 : 0,
+        tf: s.entered ? 'translateY(calc(min(370px, 37vh) * -0.98))' : 'none',
+        anim: s.entered ? 'none' : 'avCdOut 1.5s cubic-bezier(0.22,1,0.36,1) ' + (2.9 + id * 0.22).toFixed(2) + 's forwards',
+        onDown: (e) => {
+          e.preventDefault();
+          const slots = s.slots.filter(x => x !== id);
+          this.setState({ dragIdx: id, dragX: e.clientX, dragY: e.clientY, slots: slots, gap: k });
+        }
+      });
+    }
+    return {
+      name: s.name,
+      onName: (e) => this.setState({ name: e.target.value.replace(/(^|\s)(\S)/g, (m, a, b) => a + b.toUpperCase()) }),
+      ...[['ink','s'],['ink','m'],['ink','l'],['chrome','s'],['chrome','m'],['chrome','l']].reduce((acc, pair, i) => {
+        const sh = pair[0], sz = pair[1];
+        const on = s.shape === sh && s.size === sz;
+        acc['bg' + i] = on ? '#ffffff' : '#ececea';
+        acc['ring' + i] = on ? 'inset 0 0 0 1.5px #14140f, 0 6px 16px rgba(20,20,15,0.12)' : 'inset 0 0 0 1px rgba(20,20,15,0.08)';
+        acc['pick' + i] = () => this.setState({ shape: sh, size: sz });
+        return acc;
+      }, {}),
+      shadowOpts: [['gold', '#c89628'], ['silver', '#8f9096'], ['ink', '#14140f']].map(([k, col]) => ({
+        color: col,
+        ring: s.shade === k ? '0 0 0 2px #f4f4f2, 0 0 0 3.5px ' + col : 'inset 0 0 0 1px rgba(255,255,255,0.35)',
+        onPick: () => this.setState({ shade: k })
+      })),
+      placedArtBg: (s.placedId !== null && this.art[s.placedId % 6]) ? "url('" + this.art[s.placedId % 6] + "')" : 'none',
+      dragArtBg: (s.dragIdx !== null && this.art[s.dragIdx % 6]) ? "url('" + this.art[s.dragIdx % 6] + "')" : 'none',
+      curtainXL: (s.curtain || s.screen === 'home') ? '-101%' : '0%',
+      curtainXR: (s.curtain || s.screen === 'home') ? '101%' : '0%',
+      setupOpacity: (s.fading || s.screen !== 'setup') ? 0 : 1,
+      setupPE: (s.fading || s.screen !== 'setup') ? 'none' : 'auto',
+      goNext: (e) => {
+        e.preventDefault();
+        this.stopAudio(true);
+        this.setState({ fading: true, playing: false });
+        setTimeout(() => this.setState({ fading: false }), 720);
+      },
+      platterRef: this.platterRef,
+      bgRef: this.bgRef,
+      cardRef: this.cardRef,
+      tagRef: this.tagRef,
+      barsRef: this.barsRef,
+      tagOpacity: s.name.trim() ? 1 : 0,
+      hingeRef: this.hingeRef,
+      ringRef: this.ringRef,
+      discs,
+      togglePlay: () => {
+        if (s.placedId === null) return;
+        const on = !s.playing;
+        this.setState({ playing: on, arm: on ? 44 : 16 });
+        if (on) this.startAudio(s.placedId); else { clearTimeout(this._handoffT); this.stopAudio(false); }
+      },
+      barPlay: s.playing ? 'running' : 'paused',
+      elapsed: this.fmt(s.secs),
+      total: s.dur ? this.fmt(Math.floor(s.dur)) : '00:00:00',
+      trackNo: s.placedId === null ? 'T.--' : 'T.0' + (s.placedId + 1),
+      nowPlaying: s.placedId === null ? 'No record' : ['Blinding Lights', 'Starboy', 'Heartless', 'Party Monster', 'Often', 'Moth To A Flame'][s.placedId % 6],
+      nowArtist: s.placedId === null ? '—' : ['The Weeknd', 'The Weeknd ft. Daft Punk', 'The Weeknd', 'The Weeknd', 'The Weeknd', 'Swedish House Mafia & The Weeknd'][s.placedId % 6],
+      pillBg: s.playing ? '#14140f' : '#e2e2e0',
+      pillFg: s.playing ? '#f7e6ae' : 'rgba(20,20,15,0.5)',
+      onDiscLift: (e) => {
+        if (s.placedId === null) return;
+        e.preventDefault();
+        e.stopPropagation();
+        this._fromPlatter = true;
+        clearTimeout(this._handoffT);
+        this.stopAudio(true);
+        this.setState({ placedId: null, playing: false, arm: 16, secs: 0, dur: 0, dragIdx: s.placedId, dragX: e.clientX, dragY: e.clientY, gap: null });
+      },
+      onArmDown: (e) => {
+        if (s.placedId === null) return;
+        e.preventDefault();
+        this._armDrag = true;
+      },
+      placed: s.placedId !== null,
+      dragging: dragging,
+      dragX: s.dragX,
+      dragY: s.dragY,
+      armDeg: s.arm,
+      playShift: s.playing ? '-26vw' : '0vw',
+      revealOp: s.playing ? 1 : 0,
+      revealY1: s.playing ? '0px' : '110%',
+      revealY2: s.playing ? '0px' : '110%',
+      pill: s.playing ? 'ON' : 'OFF',
+      spinCss: s.playing ? 'avSpin 4.6s linear infinite' : 'none',
+      hint: s.playing ? 'Now playing — drag the record off to stop' : (s.placedId !== null ? 'Drag the tonearm over the record' : 'Drag a record onto the deck')
+    };
+  }
+}
+</script>
+</body>
+</html>
